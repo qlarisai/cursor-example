@@ -23,55 +23,24 @@ git clone <this-repo> pm-ai-example && cd pm-ai-example && claude
 
 When Claude Code asks whether to trust the folder and enable the `qlaris` MCP server, say **yes**.
 
-### 3. Check the MCP server
-
-`.mcp.json` is checked in and registers a single HTTP MCP server:
-
-```json
-{
-  "mcpServers": {
-    "qlaris": {
-      "type": "http",
-      "url": "https://app.qlaris.ai/api/mcp"
-    }
-  }
-}
-```
-
-`.claude/settings.json` is checked in and enables it for everyone who clones the repo, with every
-qlaris tool pre-allowed so a run isn't interrupted by permission prompts mid-study:
-
-```json
-{
-  "enabledMcpjsonServers": ["qlaris"],
-  "permissions": {
-    "allow": ["mcp__qlaris"]
-  }
-}
-```
-
-`mcp__qlaris` is a whole-server rule — it covers every current and future qlaris tool, including
-the ones that spend research units (`run_survey`, `run_user_test`, `start_interview`) and the ones
-that delete (`delete_persona`, `delete_prototype`, `remove_research_document`). Cost is still shown
-by the `dryRun` step before anything large runs, but the permission prompt is gone. Narrow it to
-specific `mcp__qlaris__<tool>` rules if you want the prompt back on spend.
-
-`.claude/settings.local.json` sits next to it, is gitignored, and is where your own permission
-grants land. It overrides `settings.json` key by key — leave it as `{}` unless you need a personal
-override.
-
-Verify it connected:
+### 3. Verify the connection
 
 ```
 /mcp
 ```
 
 `qlaris` must show as **connected**. The first connection opens a browser window to authenticate
-against your qlaris account — if that didn't happen, run `/mcp` and pick `qlaris` to authenticate
+against your qlaris account — if that didn't happen, run `/mcp`, pick `qlaris`, and authenticate
 manually.
 
 **If it doesn't connect, stop.** Nothing in this repo works without it, and there is deliberately
 no fallback — Claude will not roleplay a persona panel in place of real qlaris results.
+
+There is nothing to configure: `.mcp.json` and `.claude/settings.json` are both checked in. Worth
+knowing, though, that `settings.json` allows the whole qlaris server (`mcp__qlaris`) so a run isn't
+interrupted by permission prompts mid-study — that includes the tools that spend research units and
+the ones that delete. The `dryRun` step still shows cost before anything large runs. Narrow it to
+specific `mcp__qlaris__<tool>` rules if you want the prompt back on spend.
 
 ### 4. Check your units
 
