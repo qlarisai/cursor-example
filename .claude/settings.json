@@ -1,0 +1,12 @@
+{
+  "enabledMcpjsonServers": [
+    "qlaris"
+  ],
+  "permissions": {
+    "allow": [
+      "mcp__qlaris__list_workspace_contexts",
+      "mcp__qlaris__list_skills",
+      "mcp__qlaris__get_skill"
+    ]
+  }
+}

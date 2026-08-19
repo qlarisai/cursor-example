@@ -38,13 +38,25 @@ When Claude Code asks whether to trust the folder and enable the `qlaris` MCP se
 }
 ```
 
-`.claude/settings.local.json` (gitignored, machine-specific) enables it:
+`.claude/settings.json` is checked in and enables it for everyone who clones the repo, along
+with the read-only qlaris tools that never need a permission prompt:
 
 ```json
 {
-  "enabledMcpjsonServers": ["qlaris"]
+  "enabledMcpjsonServers": ["qlaris"],
+  "permissions": {
+    "allow": [
+      "mcp__qlaris__list_workspace_contexts",
+      "mcp__qlaris__list_skills",
+      "mcp__qlaris__get_skill"
+    ]
+  }
 }
 ```
+
+`.claude/settings.local.json` sits next to it, is gitignored, and is where your own permission
+grants land. It overrides `settings.json` key by key — leave it as `{}` unless you need a personal
+override.
 
 Verify it connected:
 
@@ -195,7 +207,8 @@ that's true produces useful research; a rich brief that's made up produces confi
 
 ```
 .mcp.json                     registers the qlaris MCP server (checked in)
-.claude/settings.local.json   enables it locally (gitignored)
+.claude/settings.json         enables it + read-only tool permissions (checked in)
+.claude/settings.local.json   your personal overrides (gitignored)
 CLAUDE.md                     operating rules for Claude in this repo
 AGENTS.md                     symlink to CLAUDE.md, for non-Claude agents
 discovery/<slug>/             pipeline run state, briefs, prototypes (gitignored)
