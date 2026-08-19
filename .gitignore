@@ -18,3 +18,7 @@
 *.log
 *.tmp
 tmp/
+
+# Research working directories (sensitive research data)
+context/
+discovery/
