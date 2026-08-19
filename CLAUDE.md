@@ -18,7 +18,7 @@ Do not look for `package.json`, lint configs, or CI. If a task seems to call for
 { "mcpServers": { "qlaris": { "type": "http", "url": "https://app.qlaris.ai/api/mcp" } } }
 ```
 
-`.claude/settings.json` (checked in) enables it via `enabledMcpjsonServers` and pre-allows the read-only `list_workspace_contexts` / `list_skills` / `get_skill` tools; `.claude/settings.local.json` is gitignored and holds personal overrides only. qlaris is the research engine — it runs synthetic surveys, UX tests, and interviews against digital-twin persona panels. **There is no fallback.** If the MCP is unavailable, stop and say so; never substitute Claude roleplay for qlaris results.
+`.claude/settings.json` (checked in) enables it via `enabledMcpjsonServers` and allows the whole server with the `mcp__qlaris` permission rule — every qlaris tool runs without a prompt, including unit-spending and delete tools, so the `dryRun` cost step is the only gate before a large run. `.claude/settings.local.json` is gitignored and holds personal overrides only. qlaris is the research engine — it runs synthetic surveys, UX tests, and interviews against digital-twin persona panels. **There is no fallback.** If the MCP is unavailable, stop and say so; never substitute Claude roleplay for qlaris results.
 
 ## Mandatory routing triggers
 

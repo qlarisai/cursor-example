@@ -38,21 +38,23 @@ When Claude Code asks whether to trust the folder and enable the `qlaris` MCP se
 }
 ```
 
-`.claude/settings.json` is checked in and enables it for everyone who clones the repo, along
-with the read-only qlaris tools that never need a permission prompt:
+`.claude/settings.json` is checked in and enables it for everyone who clones the repo, with every
+qlaris tool pre-allowed so a run isn't interrupted by permission prompts mid-study:
 
 ```json
 {
   "enabledMcpjsonServers": ["qlaris"],
   "permissions": {
-    "allow": [
-      "mcp__qlaris__list_workspace_contexts",
-      "mcp__qlaris__list_skills",
-      "mcp__qlaris__get_skill"
-    ]
+    "allow": ["mcp__qlaris"]
   }
 }
 ```
+
+`mcp__qlaris` is a whole-server rule — it covers every current and future qlaris tool, including
+the ones that spend research units (`run_survey`, `run_user_test`, `start_interview`) and the ones
+that delete (`delete_persona`, `delete_prototype`, `remove_research_document`). Cost is still shown
+by the `dryRun` step before anything large runs, but the permission prompt is gone. Narrow it to
+specific `mcp__qlaris__<tool>` rules if you want the prompt back on spend.
 
 `.claude/settings.local.json` sits next to it, is gitignored, and is where your own permission
 grants land. It overrides `settings.json` key by key — leave it as `{}` unless you need a personal
@@ -207,7 +209,7 @@ that's true produces useful research; a rich brief that's made up produces confi
 
 ```
 .mcp.json                     registers the qlaris MCP server (checked in)
-.claude/settings.json         enables it + read-only tool permissions (checked in)
+.claude/settings.json         enables it + allows all qlaris tools (checked in)
 .claude/settings.local.json   your personal overrides (gitignored)
 CLAUDE.md                     operating rules for Claude in this repo
 AGENTS.md                     symlink to CLAUDE.md, for non-Claude agents
