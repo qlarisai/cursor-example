@@ -25,8 +25,13 @@ Install [Cursor](https://cursor.com) and sign in.
 
 ```bash
 git clone https://github.com/qlarisai/cursor-example.git qlaris-workspace
-cursor qlaris-workspace
 ```
+
+Then open that folder in Cursor: **File → Open Folder…**, or drag it onto the Cursor icon.
+
+The `cursor` terminal command is **not** installed by default. If you want to open folders from the
+shell, run **Shell Command: Install 'cursor' command** from the Command Palette (**Cmd+Shift+P**)
+first — after that, `cursor qlaris-workspace` works.
 
 Name the target directory after the research you're doing — `qlaris-workspace` is a placeholder.
 If you have write access and prefer SSH, use `git@github.com:qlarisai/cursor-example.git`.
