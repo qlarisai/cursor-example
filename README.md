@@ -47,9 +47,6 @@ the server in that panel.
 `qlaris` must show as **connected** before you do anything else. If a tool call misbehaves, check
 the logs: **Cmd+Shift+U** → select **MCP Logs** from the dropdown.
 
-**If it doesn't connect, stop.** Nothing in this repo works without it, and there is deliberately
-no fallback — the agent will not roleplay a persona panel in place of real qlaris results.
-
 ### 4. Stop it prompting mid-study
 
 Unlike some agent tools, Cursor does **not** take tool approval from a project file — it's a
