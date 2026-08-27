@@ -49,14 +49,16 @@ the logs: **Cmd+Shift+U** → select **MCP Logs** from the dropdown.
 
 ### 4. Stop it prompting mid-study
 
-Nothing to do — `.cursor/permissions.json` is checked in and already allows every qlaris tool:
+In **Cursor Settings → Agents → Approvals & Execution**, set the run mode to **Allowlist** and add
+this single entry to the MCP allowlist:
 
-```json
-{ "mcpAllowlist": ["qlaris:*"] }
+```
+qlaris:*
 ```
 
-The format matters, and it is not obvious from the settings UI. Entries are **`server:tool`**, where
-`server` is the key from `.cursor/mcp.json`:
+That covers every qlaris tool. The format is the part that trips people up: entries are
+**`server:tool`**, where `server` is the key from `.cursor/mcp.json`. An entry without a colon is
+silently ignored, so a bare `qlaris` — or a `mcp__qlaris` style string — does nothing.
 
 | Entry | Matches |
 |---|---|
@@ -65,11 +67,20 @@ The format matters, and it is not obvious from the settings UI. Entries are **`s
 | `qlaris:list_*` | globs work inside names |
 | `*:*` | every tool from every server |
 
-A bare `qlaris`, or a `mcp__qlaris` style string, is **not** a valid entry — the colon is required.
+The run mode matters as much as the entry. **Allowlist** runs allowlisted actions without approval.
+**Auto-review** does too, but it needs a Cursor-managed classifier model — on a team plan that
+blocks those models it is greyed out and unavailable. **Run Everything** skips the allowlist
+entirely and prompts for nothing.
 
-The same field works per-user in `~/.cursor/permissions.json`; when both files exist Cursor
-concatenates the arrays. **Cursor Settings → Agents → Approvals & Execution** shows the resulting
-allowlist and the run mode, but the committed file is what makes this work on a fresh clone.
+`.cursor/permissions.json` is checked in carrying the same entry:
+
+```json
+{ "mcpAllowlist": ["qlaris:*"] }
+```
+
+Where Cursor reads it, the setup above happens on clone and the in-app list goes read-only citing
+the file — that is expected, not a problem. Where it doesn't (a team-managed run mode overrides
+both the file and the in-app list), add the entry by hand as above. Adding it manually always works.
 
 Worth knowing what that covers: allowing the whole server means a run isn't interrupted by
 permission prompts mid-study, and that includes the tools that spend research units and the ones

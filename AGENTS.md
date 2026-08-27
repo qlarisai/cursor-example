@@ -24,15 +24,17 @@ scaffolding.
 { "mcpServers": { "qlaris": { "url": "https://app.qlaris.ai/api/mcp" } } }
 ```
 
-`.cursor/permissions.json` allows every qlaris tool without a prompt:
+`.cursor/permissions.json` carries the tool allowlist:
 
 ```json
 { "mcpAllowlist": ["qlaris:*"] }
 ```
 
 Entries are `server:tool` — the colon is required, and `server` is the key from `.cursor/mcp.json`.
-Both files are checked in, so a fresh clone gets the server and its approvals. Toggling the server
-on under Customize → MCPs is still a one-time per-machine step. See `README.md`.
+Both files are checked in, but the allowlist only takes effect where Cursor reads the file and the
+run mode consults an allowlist; otherwise `qlaris:*` has to be added by hand in Cursor Settings →
+Agents → Approvals & Execution. Toggling the server on under Customize → MCPs is a one-time
+per-machine step either way. See `README.md`.
 
 qlaris is the research engine — it runs synthetic surveys, UX tests, and interviews against
 digital-twin persona panels. **There is no fallback.** If the MCP is unavailable, stop and say so;
