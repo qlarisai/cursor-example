@@ -24,10 +24,15 @@ scaffolding.
 { "mcpServers": { "qlaris": { "url": "https://app.qlaris.ai/api/mcp" } } }
 ```
 
-The file is checked in, so every clone gets the server definition. Cursor does not take tool
-approval from a project file — enabling the server and allowing its tools is a one-time UI step per
-machine (Customize → MCPs to toggle the server on; Cursor Settings → Agents → Approvals & Execution
-to stop it prompting mid-study). See `README.md`.
+`.cursor/permissions.json` allows every qlaris tool without a prompt:
+
+```json
+{ "mcpAllowlist": ["qlaris:*"] }
+```
+
+Entries are `server:tool` — the colon is required, and `server` is the key from `.cursor/mcp.json`.
+Both files are checked in, so a fresh clone gets the server and its approvals. Toggling the server
+on under Customize → MCPs is still a one-time per-machine step. See `README.md`.
 
 qlaris is the research engine — it runs synthetic surveys, UX tests, and interviews against
 digital-twin persona panels. **There is no fallback.** If the MCP is unavailable, stop and say so;

@@ -49,10 +49,27 @@ the logs: **Cmd+Shift+U** → select **MCP Logs** from the dropdown.
 
 ### 4. Stop it prompting mid-study
 
-Unlike some agent tools, Cursor does **not** take tool approval from a project file — it's a
-one-time setting per machine. Go to **Cursor Settings → Agents → Approvals & Execution** and either
-leave the default auto-review mode on, or add `qlaris` to the allowlist. Leaving a server's tool
-allowlist empty allows all of its tools.
+Nothing to do — `.cursor/permissions.json` is checked in and already allows every qlaris tool:
+
+```json
+{ "mcpAllowlist": ["qlaris:*"] }
+```
+
+The format matters, and it is not obvious from the settings UI. Entries are **`server:tool`**, where
+`server` is the key from `.cursor/mcp.json`:
+
+| Entry | Matches |
+|---|---|
+| `qlaris:*` | every qlaris tool |
+| `qlaris:run_survey` | that one tool |
+| `qlaris:list_*` | globs work inside names |
+| `*:*` | every tool from every server |
+
+A bare `qlaris`, or a `mcp__qlaris` style string, is **not** a valid entry — the colon is required.
+
+The same field works per-user in `~/.cursor/permissions.json`; when both files exist Cursor
+concatenates the arrays. **Cursor Settings → Agents → Approvals & Execution** shows the resulting
+allowlist and the run mode, but the committed file is what makes this work on a fresh clone.
 
 Worth knowing what that covers: allowing the whole server means a run isn't interrupted by
 permission prompts mid-study, and that includes the tools that spend research units and the ones
@@ -204,12 +221,11 @@ that's true produces useful research; a rich brief that's made up produces confi
 
 ```
 .cursor/mcp.json              registers the qlaris MCP server (checked in)
+.cursor/permissions.json      allows every qlaris tool without a prompt (checked in)
 AGENTS.md                     operating rules, loaded automatically by Cursor
 discovery/<slug>/             pipeline run state, briefs, prototypes (gitignored)
 context/                      optional local context files (gitignored)
 ```
-
-Tool approval is not a file in this repo — it's a per-machine Cursor setting (step 4 above).
 
 All discovery skills live on the qlaris server, not in this repo — the agent discovers them with
 `list_skills` and loads them with `get_skill`. There is nothing to install or update locally.
