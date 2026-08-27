@@ -1,5 +1,5 @@
-# Local Claude Code settings (machine-specific)
-.claude/settings.local.json
+# Note: .cursor/mcp.json is tracked on purpose so clones get the qlaris server.
+# Per-machine MCP overrides belong in the global ~/.cursor/mcp.json, not here.
 
 # macOS
 .DS_Store

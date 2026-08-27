@@ -1,61 +1,79 @@
-# Product Discovery with AI — qlaris Workspace
+# qlaris — Base Template
 
-A ready-to-run workspace for doing **AI-assisted product discovery** on a real backlog item.
-Research is run by the [qlaris](https://app.qlaris.ai) MCP server against digital-twin persona
-panels — surveys, UX tests, and interviews — not by Claude pretending to be a user.
+A **base template project for qlaris**. Clone it and you have a working qlaris setup: the MCP
+server registered, the operating rules in place, and the research directories already gitignored.
+Nothing to scaffold, nothing to wire up.
 
-There is no application source, no build, and no tests. The output of this repo is research:
+Research runs on the [qlaris](https://app.qlaris.ai) MCP server against digital-twin persona
+panels — surveys, UX tests, and interviews — not by an AI pretending to be a user.
+
+There is no application source, no build, and no tests. What this repo produces is research:
 markdown briefs, HTML prototypes, and served report URLs.
+
+Use it as the starting point for a new piece of research, or copy the two config files into a
+project you already have (see [Setting this up in another project](#setting-this-up-in-another-project)).
 
 ---
 
 ## Setup (5 minutes)
 
-### 1. Install Claude Code
+### 1. Install Cursor
 
-Install [Claude Code](https://claude.com/claude-code) and sign in.
+Install [Cursor](https://cursor.com) and sign in.
 
 ### 2. Clone and open the repo
 
 ```bash
-git clone <this-repo> pm-ai-example && cd pm-ai-example && claude
+git clone <this-repo> qlaris-workspace && cursor qlaris-workspace
 ```
 
-When Claude Code asks whether to trust the folder and enable the `qlaris` MCP server, say **yes**.
+`.cursor/mcp.json` is checked in, so Cursor sees the `qlaris` server as soon as the folder opens.
 
-### 3. Verify the connection
+### 3. Enable the server and authenticate
 
-```
-/mcp
-```
+Open **Customize → MCPs** and toggle `qlaris` **on**. The first connection opens a browser window
+to authenticate against your qlaris account — if that didn't happen, use the login prompt next to
+the server in that panel.
 
-`qlaris` must show as **connected**. The first connection opens a browser window to authenticate
-against your qlaris account — if that didn't happen, run `/mcp`, pick `qlaris`, and authenticate
-manually.
+`qlaris` must show as **connected** before you do anything else. If a tool call misbehaves, check
+the logs: **Cmd+Shift+U** → select **MCP Logs** from the dropdown.
 
 **If it doesn't connect, stop.** Nothing in this repo works without it, and there is deliberately
-no fallback — Claude will not roleplay a persona panel in place of real qlaris results.
+no fallback — the agent will not roleplay a persona panel in place of real qlaris results.
 
-There is nothing to configure: `.mcp.json` and `.claude/settings.json` are both checked in. Worth
-knowing, though, that `settings.json` allows the whole qlaris server (`mcp__qlaris`) so a run isn't
-interrupted by permission prompts mid-study — that includes the tools that spend research units and
-the ones that delete. The `dryRun` step still shows cost before anything large runs. Narrow it to
-specific `mcp__qlaris__<tool>` rules if you want the prompt back on spend.
+### 4. Stop it prompting mid-study
 
-### 4. Check your units
+Unlike some agent tools, Cursor does **not** take tool approval from a project file — it's a
+one-time setting per machine. Go to **Cursor Settings → Agents → Approvals & Execution** and either
+leave the default auto-review mode on, or add `qlaris` to the allowlist. Leaving a server's tool
+allowlist empty allows all of its tools.
+
+Worth knowing what that covers: allowing the whole server means a run isn't interrupted by
+permission prompts mid-study, and that includes the tools that spend research units and the ones
+that delete. The `dryRun` step still shows cost before anything large runs. Allowlist individual
+tools instead if you want the prompt back on spend.
+
+### 5. Check your units
 
 Make sure your qlaris account has research units available. Anything large is dry-run for cost
 first, so you see the price before it is spent.
 
 ### Setting this up in another project
 
-Nothing here is repo-specific. To get the same command surface anywhere:
+Nothing here is repo-specific. To get the same command surface anywhere, drop this into that
+project's `.cursor/mcp.json`:
 
-```bash
-claude mcp add --transport http qlaris https://app.qlaris.ai/api/mcp
+```json
+{
+  "mcpServers": {
+    "qlaris": {
+      "url": "https://app.qlaris.ai/api/mcp"
+    }
+  }
+}
 ```
 
-Then copy `CLAUDE.md` if you want the same operating rules (thresholds, no-fabrication, pipeline
+Then copy `AGENTS.md` if you want the same operating rules (thresholds, no-fabrication, pipeline
 structure) to apply there too.
 
 ---
@@ -63,8 +81,8 @@ structure) to apply there too.
 ## Using it: `with qlaris:`
 
 **`with qlaris:` is the entire interface.** Any message containing the phrase `with qlaris` (any
-casing, colon optional) routes through the qlaris skill server before Claude answers — so you get
-the real command surface, not Claude's memory of it.
+casing, colon optional) routes through the qlaris skill server before the agent answers — so you get
+the real command surface, not the model's memory of it.
 
 ### Three ways to ask
 
@@ -127,7 +145,9 @@ narratives; over-defining shrinks the panel to nobody.
 | `with qlaris: reconcile` | 6 · Reconciliation |
 
 The full flow takes hours, not minutes, and produces a validated concept plus a working prototype.
-See `CLAUDE.md` for how it's structured and which gates it enforces.
+Run each phase in a **new chat**, passing the handover forward — the pipeline is designed so that no
+single conversation carries the whole run. See `AGENTS.md` for how it's structured and which gates
+it enforces.
 
 ### Querying what's already known
 
@@ -150,7 +170,7 @@ new study. If the repository doesn't cover your question, it says so plainly ins
 
 ## The rules that don't bend
 
-These are enforced by `CLAUDE.md` and by the qlaris skills, because the failure mode of synthetic
+These are enforced by `AGENTS.md` and by the qlaris skills, because the failure mode of synthetic
 research is *agreeable, plausible, wrong*.
 
 **Thresholds are fixed and applied mechanically.** Likert needs mean ≥4.0/5 *and* ≥70% positive. A
@@ -177,14 +197,13 @@ that's true produces useful research; a rich brief that's made up produces confi
 ## Repo layout
 
 ```
-.mcp.json                     registers the qlaris MCP server (checked in)
-.claude/settings.json         enables it + allows all qlaris tools (checked in)
-.claude/settings.local.json   your personal overrides (gitignored)
-CLAUDE.md                     operating rules for Claude in this repo
-AGENTS.md                     symlink to CLAUDE.md, for non-Claude agents
+.cursor/mcp.json              registers the qlaris MCP server (checked in)
+AGENTS.md                     operating rules, loaded automatically by Cursor
 discovery/<slug>/             pipeline run state, briefs, prototypes (gitignored)
 context/                      optional local context files (gitignored)
 ```
 
-All discovery skills live on the qlaris server, not in this repo — Claude discovers them with
+Tool approval is not a file in this repo — it's a per-machine Cursor setting (step 4 above).
+
+All discovery skills live on the qlaris server, not in this repo — the agent discovers them with
 `list_skills` and loads them with `get_skill`. There is nothing to install or update locally.
