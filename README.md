@@ -24,8 +24,12 @@ Install [Cursor](https://cursor.com) and sign in.
 ### 2. Clone and open the repo
 
 ```bash
-git clone <this-repo> qlaris-workspace && cursor qlaris-workspace
+git clone https://github.com/qlarisai/cursor-example.git qlaris-workspace
+cursor qlaris-workspace
 ```
+
+Name the target directory after the research you're doing — `qlaris-workspace` is a placeholder.
+If you have write access and prefer SSH, use `git@github.com:qlarisai/cursor-example.git`.
 
 `.cursor/mcp.json` is checked in, so Cursor sees the `qlaris` server as soon as the folder opens.
 
